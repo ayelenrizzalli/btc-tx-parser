@@ -4,13 +4,9 @@ raw_hex = '0100000001c997a5e56e104102fa209c6a852dd90660a20b2d9c352423edce25857fc
 
 # Convert from hexa to int
 def convert_raw_amount(amount):
-    vals = [b for b in bytes.fromhex(amount)]
-    sum = 0
-    for index, num in enumerate(vals[::-1]):
-        value = num * 256** index
-        sum += value
-    
-    return sum
+    amount_decoded_hex = bytes.fromhex(amount)[::-1].hex()
+    int_amount = int(amount_decoded_hex,16)
+    return(int_amount)
 
 # Parsing tx
 version = raw_hex[0:8]
@@ -42,14 +38,14 @@ position +=2
 
 # Parsing outputs dinamically based on output_count
 for i in range(output_count):
-    amount = raw_hex[position:position+16]
+    amount = convert_raw_amount(raw_hex[position:position+16])
     position += 16
     scriptPubKey_len = int(raw_hex[position:position+2],16)
     position +=2
     scriptPubKey = raw_hex[position: position+scriptPubKey_len*2]
     position +=scriptPubKey_len*2
     outputs.append([amount,scriptPubKey_len,scriptPubKey])
-    print(scriptPubKey_len)
+
 
 
 print('outputs', outputs)
